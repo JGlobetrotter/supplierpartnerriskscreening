@@ -14,7 +14,107 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          company_name: string | null
+          created_at: string
+          id: string
+          industry: string | null
+          updated_at: string
+          user_id: string
+          user_role: string | null
+        }
+        Insert: {
+          company_name?: string | null
+          created_at?: string
+          id?: string
+          industry?: string | null
+          updated_at?: string
+          user_id: string
+          user_role?: string | null
+        }
+        Update: {
+          company_name?: string | null
+          created_at?: string
+          id?: string
+          industry?: string | null
+          updated_at?: string
+          user_id?: string
+          user_role?: string | null
+        }
+        Relationships: []
+      }
+      screening_responses: {
+        Row: {
+          created_at: string
+          id: string
+          response_data: Json
+          screening_id: string
+          step_number: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          response_data?: Json
+          screening_id: string
+          step_number: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          response_data?: Json
+          screening_id?: string
+          step_number?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "screening_responses_screening_id_fkey"
+            columns: ["screening_id"]
+            isOneToOne: false
+            referencedRelation: "screenings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      screenings: {
+        Row: {
+          created_at: string
+          current_step: number
+          id: string
+          overall_score: number | null
+          partner_name: string | null
+          risk_level: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_step?: number
+          id?: string
+          overall_score?: number | null
+          partner_name?: string | null
+          risk_level?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_step?: number
+          id?: string
+          overall_score?: number | null
+          partner_name?: string | null
+          risk_level?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
