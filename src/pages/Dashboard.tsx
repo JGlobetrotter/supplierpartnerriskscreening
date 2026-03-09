@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import Footer from '@/components/Footer';
 import { getRiskColor, getRiskLabel } from '@/lib/scoring';
 import { cn } from '@/lib/utils';
-import { Plus, Shield, LogOut, FileText, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { Plus, Shield, LogOut, FileText, AlertTriangle, CheckCircle2, Trash2 } from 'lucide-react';
 
 interface Screening {
   id: string;
