@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   CategoryScores,
   calculateOverallScore,
@@ -8,7 +9,10 @@ import {
 } from '@/lib/scoring';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { Download } from 'lucide-react';
+import { generateScreeningPdf } from '@/lib/generatePdf';
 import {
   RadarChart,
   PolarGrid,
@@ -22,9 +26,10 @@ interface Props {
   categories: CategoryScores;
   redFlags: Record<string, boolean>;
   partnerName: string;
+  screeningId?: string;
 }
 
-const Step10Summary = ({ categories, redFlags, partnerName }: Props) => {
+const Step10Summary = ({ categories, redFlags, partnerName, screeningId }: Props) => {
   const { score, level } = calculateOverallScore(categories, redFlags);
   const activeFlags = RED_FLAGS.filter(rf => redFlags[rf.key]);
 
