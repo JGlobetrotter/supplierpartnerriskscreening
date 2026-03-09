@@ -172,6 +172,13 @@ const Dashboard = () => {
                           {getRiskLabel(s.risk_level)}
                         </Badge>
                       )}
+                      <button
+                        onClick={(e) => deleteScreening(e, s.id)}
+                        className="rounded p-1 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+                        title="Delete screening"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
                     </div>
                   </CardContent>
                 </Card>
