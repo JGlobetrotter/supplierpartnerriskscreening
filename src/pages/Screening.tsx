@@ -218,75 +218,135 @@ const Screening = () => {
         </div>
       );
       case 5: return (
-        <CheckboxStep
-          title="Workplace Safety"
-          description="Assess workplace health and safety practices."
-          data={stepData[5]}
-          onChange={d => updateStep(5, d)}
-          items={[
-            { key: 'healthSafetyPolicy', label: 'Health and safety policy' },
-            { key: 'safetyTraining', label: 'Safety training for workers' },
-            { key: 'protectiveEquipment', label: 'Protective equipment provided' },
-            { key: 'incidentReporting', label: 'Incident reporting system' },
-            { key: 'historyOfAccidents', label: 'History of workplace accidents', isNegative: true, description: 'This increases the risk score' },
-          ]}
-        />
+        <div className="space-y-6">
+          <CheckboxStep
+            title="Workplace Safety"
+            description="Assess workplace health and safety practices."
+            data={stepData[5]}
+            onChange={d => updateStep(5, d)}
+            items={[
+              { key: 'healthSafetyPolicy', label: 'Health and safety policy' },
+              { key: 'safetyTraining', label: 'Safety training for workers' },
+              { key: 'protectiveEquipment', label: 'Protective equipment provided' },
+              { key: 'incidentReporting', label: 'Incident reporting system' },
+              { key: 'historyOfAccidents', label: 'History of workplace accidents', isNegative: true, description: 'This increases the risk score' },
+            ]}
+          />
+          <div className="rounded-lg border p-4">
+            <p className="mb-2 text-sm font-medium">Supporting Documents</p>
+            <p className="mb-3 text-xs text-muted-foreground">Upload safety policies, training records, or incident reports.</p>
+            <FileUpload
+              screeningId={screeningId}
+              stepKey="workplace-safety"
+              files={stepData[5]?.uploadedFiles || []}
+              onFilesChange={(files) => updateStep(5, { ...stepData[5], uploadedFiles: files })}
+            />
+          </div>
+        </div>
       );
       case 6: return (
-        <CheckboxStep
-          title="Human Rights Governance"
-          description="Evaluate human rights policies and procedures."
-          data={stepData[6]}
-          onChange={d => updateStep(6, d)}
-          items={[
-            { key: 'humanRightsPolicy', label: 'Human rights policy' },
-            { key: 'dueDiligence', label: 'Due diligence procedures' },
-            { key: 'supplierCodeOfConduct', label: 'Supplier code of conduct' },
-            { key: 'humanRightsTraining', label: 'Human rights training for staff' },
-          ]}
-        />
+        <div className="space-y-6">
+          <CheckboxStep
+            title="Human Rights Governance"
+            description="Evaluate human rights policies and procedures."
+            data={stepData[6]}
+            onChange={d => updateStep(6, d)}
+            items={[
+              { key: 'humanRightsPolicy', label: 'Human rights policy' },
+              { key: 'dueDiligence', label: 'Due diligence procedures' },
+              { key: 'supplierCodeOfConduct', label: 'Supplier code of conduct' },
+              { key: 'humanRightsTraining', label: 'Human rights training for staff' },
+            ]}
+          />
+          <div className="rounded-lg border p-4">
+            <p className="mb-2 text-sm font-medium">Supporting Documents</p>
+            <p className="mb-3 text-xs text-muted-foreground">Upload human rights policies, due diligence reports, or codes of conduct.</p>
+            <FileUpload
+              screeningId={screeningId}
+              stepKey="human-rights"
+              files={stepData[6]?.uploadedFiles || []}
+              onFilesChange={(files) => updateStep(6, { ...stepData[6], uploadedFiles: files })}
+            />
+          </div>
+        </div>
       );
       case 7: return (
-        <CheckboxStep
-          title="Supply Chain Transparency"
-          description="Assess supply chain visibility and monitoring."
-          data={stepData[7]}
-          onChange={d => updateStep(7, d)}
-          items={[
-            { key: 'tracksSuppliers', label: 'Tracks its own suppliers' },
-            { key: 'supplierAudits', label: 'Supplier audits conducted' },
-            { key: 'rawMaterialTraceability', label: 'Raw material traceability implemented' },
-            { key: 'highRiskMineralScreening', label: 'High-risk minerals / materials screened' },
-          ]}
-        />
+        <div className="space-y-6">
+          <CheckboxStep
+            title="Supply Chain Transparency"
+            description="Assess supply chain visibility and monitoring."
+            data={stepData[7]}
+            onChange={d => updateStep(7, d)}
+            items={[
+              { key: 'tracksSuppliers', label: 'Tracks its own suppliers' },
+              { key: 'supplierAudits', label: 'Supplier audits conducted' },
+              { key: 'rawMaterialTraceability', label: 'Raw material traceability implemented' },
+              { key: 'highRiskMineralScreening', label: 'High-risk minerals / materials screened' },
+            ]}
+          />
+          <div className="rounded-lg border p-4">
+            <p className="mb-2 text-sm font-medium">Supporting Documents</p>
+            <p className="mb-3 text-xs text-muted-foreground">Upload supplier audit reports, traceability records, or mineral sourcing documents.</p>
+            <FileUpload
+              screeningId={screeningId}
+              stepKey="supply-chain"
+              files={stepData[7]?.uploadedFiles || []}
+              onFilesChange={(files) => updateStep(7, { ...stepData[7], uploadedFiles: files })}
+            />
+          </div>
+        </div>
       );
       case 8: return (
-        <CheckboxStep
-          title="Compliance & Legal Issues"
-          description="Identify past compliance issues and legal exposure."
-          data={stepData[8]}
-          onChange={d => updateStep(8, d)}
-          items={[
-            { key: 'pastLaborViolations', label: 'Past labor violations', isNegative: true },
-            { key: 'environmentalViolations', label: 'Environmental violations', isNegative: true },
-            { key: 'workerRightsLitigation', label: 'Litigation related to worker rights', isNegative: true },
-            { key: 'sanctionsExposure', label: 'Sanctions exposure', isNegative: true },
-          ]}
-        />
+        <div className="space-y-6">
+          <CheckboxStep
+            title="Compliance & Legal Issues"
+            description="Identify past compliance issues and legal exposure."
+            data={stepData[8]}
+            onChange={d => updateStep(8, d)}
+            items={[
+              { key: 'pastLaborViolations', label: 'Past labor violations', isNegative: true },
+              { key: 'environmentalViolations', label: 'Environmental violations', isNegative: true },
+              { key: 'workerRightsLitigation', label: 'Litigation related to worker rights', isNegative: true },
+              { key: 'sanctionsExposure', label: 'Sanctions exposure', isNegative: true },
+            ]}
+          />
+          <div className="rounded-lg border p-4">
+            <p className="mb-2 text-sm font-medium">Supporting Documents</p>
+            <p className="mb-3 text-xs text-muted-foreground">Upload compliance records, legal filings, or sanctions screening results.</p>
+            <FileUpload
+              screeningId={screeningId}
+              stepKey="compliance-legal"
+              files={stepData[8]?.uploadedFiles || []}
+              onFilesChange={(files) => updateStep(8, { ...stepData[8], uploadedFiles: files })}
+            />
+          </div>
+        </div>
       );
       case 9: return (
-        <CheckboxStep
-          title="Critical Red Flags"
-          description="Confirm or deny the presence of critical risk indicators. Any confirmed flag will automatically increase the overall risk rating."
-          data={stepData[9]}
-          onChange={d => updateStep(9, d)}
-          items={RED_FLAGS.map(rf => ({
-            key: rf.key,
-            label: rf.label,
-            isNegative: true,
-            description: 'Confirming this will escalate the risk rating',
-          }))}
-        />
+        <div className="space-y-6">
+          <CheckboxStep
+            title="Critical Red Flags"
+            description="Confirm or deny the presence of critical risk indicators. Any confirmed flag will automatically increase the overall risk rating."
+            data={stepData[9]}
+            onChange={d => updateStep(9, d)}
+            items={RED_FLAGS.map(rf => ({
+              key: rf.key,
+              label: rf.label,
+              isNegative: true,
+              description: 'Confirming this will escalate the risk rating',
+            }))}
+          />
+          <div className="rounded-lg border p-4">
+            <p className="mb-2 text-sm font-medium">Supporting Documents</p>
+            <p className="mb-3 text-xs text-muted-foreground">Upload investigation reports, whistleblower findings, or audit evidence.</p>
+            <FileUpload
+              screeningId={screeningId}
+              stepKey="red-flags"
+              files={stepData[9]?.uploadedFiles || []}
+              onFilesChange={(files) => updateStep(9, { ...stepData[9], uploadedFiles: files })}
+            />
+          </div>
+        </div>
       );
       case 10: return (
         <Step10Summary
