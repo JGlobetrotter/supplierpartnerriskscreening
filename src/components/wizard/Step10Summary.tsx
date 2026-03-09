@@ -32,6 +32,17 @@ interface Props {
 const Step10Summary = ({ categories, redFlags, partnerName, screeningId }: Props) => {
   const { score, level } = calculateOverallScore(categories, redFlags);
   const activeFlags = RED_FLAGS.filter(rf => redFlags[rf.key]);
+  const [downloading, setDownloading] = useState(false);
+
+  const handleDownloadPdf = async () => {
+    if (!screeningId) return;
+    setDownloading(true);
+    try {
+      await generateScreeningPdf(screeningId);
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   const radarData = [
     { subject: 'Geographic', score: categories.geographic },
