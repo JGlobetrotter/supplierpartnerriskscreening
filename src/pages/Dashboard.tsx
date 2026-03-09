@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import Footer from '@/components/Footer';
 import { getRiskColor, getRiskLabel } from '@/lib/scoring';
 import { cn } from '@/lib/utils';
-import { Plus, Shield, LogOut, FileText, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { Plus, Shield, LogOut, FileText, AlertTriangle, CheckCircle2, Trash2 } from 'lucide-react';
 
 interface Screening {
   id: string;
@@ -43,6 +43,14 @@ const Dashboard = () => {
     };
     fetch();
   }, [user]);
+
+  const deleteScreening = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    if (!confirm('Are you sure you want to delete this screening?')) return;
+    await supabase.from('screening_responses').delete().eq('screening_id', id);
+    await supabase.from('screenings').delete().eq('id', id);
+    setScreenings(prev => prev.filter(s => s.id !== id));
+  };
 
   const filtered = screenings.filter(s => {
     if (statusFilter !== 'all' && s.status !== statusFilter) return false;
@@ -164,6 +172,13 @@ const Dashboard = () => {
                           {getRiskLabel(s.risk_level)}
                         </Badge>
                       )}
+                      <button
+                        onClick={(e) => deleteScreening(e, s.id)}
+                        className="rounded p-1 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+                        title="Delete screening"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
                     </div>
                   </CardContent>
                 </Card>
