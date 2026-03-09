@@ -9,7 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import Footer from '@/components/Footer';
 import { getRiskColor, getRiskLabel } from '@/lib/scoring';
 import { cn } from '@/lib/utils';
-import { Plus, Shield, LogOut, FileText, AlertTriangle, CheckCircle2, Trash2 } from 'lucide-react';
+import { Plus, Shield, LogOut, FileText, AlertTriangle, CheckCircle2, Trash2, Download } from 'lucide-react';
+import { generateScreeningPdf } from '@/lib/generatePdf';
 
 interface Screening {
   id: string;
@@ -171,6 +172,15 @@ const Dashboard = () => {
                         <Badge className={cn(getRiskColor(s.risk_level))}>
                           {getRiskLabel(s.risk_level)}
                         </Badge>
+                      )}
+                      {s.status === 'complete' && (
+                        <button
+                          onClick={(e) => { e.stopPropagation(); generateScreeningPdf(s.id); }}
+                          className="rounded p-1 text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
+                          title="Download PDF report"
+                        >
+                          <Download className="h-4 w-4" />
+                        </button>
                       )}
                       <button
                         onClick={(e) => deleteScreening(e, s.id)}
