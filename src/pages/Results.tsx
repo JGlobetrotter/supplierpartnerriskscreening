@@ -65,6 +65,7 @@ const Results = () => {
             categories={categories}
             redFlags={stepData[9] || {}}
             partnerName={stepData[2]?.organizationName || 'Unknown'}
+            screeningId={id}
           />
         </div>
       </main>

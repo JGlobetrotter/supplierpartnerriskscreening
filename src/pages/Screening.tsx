@@ -353,6 +353,7 @@ const Screening = () => {
           categories={computeCategories()}
           redFlags={stepData[9]}
           partnerName={stepData[2]?.organizationName}
+          screeningId={id}
         />
       );
       default: return null;
