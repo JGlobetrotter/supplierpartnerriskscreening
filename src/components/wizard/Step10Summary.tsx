@@ -125,6 +125,16 @@ const Step10Summary = ({ categories, redFlags, partnerName, screeningId }: Props
           </CardContent>
         </Card>
       )}
+
+      {/* Download PDF */}
+      {screeningId && (
+        <div className="flex justify-center pt-2">
+          <Button onClick={handleDownloadPdf} disabled={downloading} className="gap-2">
+            <Download className="h-4 w-4" />
+            {downloading ? 'Generating…' : 'Download PDF Report'}
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
