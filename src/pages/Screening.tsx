@@ -190,20 +190,32 @@ const Screening = () => {
       case 2: return <Step2PartnerInfo data={stepData[2]} onChange={d => updateStep(2, d)} />;
       case 3: return <Step3GeographicRisk data={stepData[3]} onChange={d => updateStep(3, d)} />;
       case 4: return (
-        <CheckboxStep
-          title="Labor Practices Assessment"
-          description="Does the partner have the following labor practices in place?"
-          data={stepData[4]}
-          onChange={d => updateStep(4, d)}
-          items={[
-            { key: 'writtenLaborPolicies', label: 'Written labor policies' },
-            { key: 'workerContracts', label: 'Worker contracts' },
-            { key: 'minimumWageCompliance', label: 'Minimum wage compliance' },
-            { key: 'maxWorkingHoursCompliance', label: 'Maximum working hours compliance' },
-            { key: 'grievanceMechanism', label: 'Worker grievance mechanism' },
-            { key: 'unionAllowed', label: 'Worker representation / unions allowed' },
-          ]}
-        />
+        <div className="space-y-6">
+          <CheckboxStep
+            title="Labor Practices Assessment"
+            description="Does the partner have the following labor practices in place?"
+            data={stepData[4]}
+            onChange={d => updateStep(4, d)}
+            items={[
+              { key: 'writtenLaborPolicies', label: 'Written labor policies' },
+              { key: 'workerContracts', label: 'Worker contracts' },
+              { key: 'minimumWageCompliance', label: 'Minimum wage compliance' },
+              { key: 'maxWorkingHoursCompliance', label: 'Maximum working hours compliance' },
+              { key: 'grievanceMechanism', label: 'Worker grievance mechanism' },
+              { key: 'unionAllowed', label: 'Worker representation / unions allowed' },
+            ]}
+          />
+          <div className="rounded-lg border p-4">
+            <p className="mb-2 text-sm font-medium">Supporting Documents</p>
+            <p className="mb-3 text-xs text-muted-foreground">Upload labor policies, contracts, or audit reports as evidence.</p>
+            <FileUpload
+              screeningId={screeningId}
+              stepKey="labor-practices"
+              files={stepData[4]?.uploadedFiles || []}
+              onFilesChange={(files) => updateStep(4, { ...stepData[4], uploadedFiles: files })}
+            />
+          </div>
+        </div>
       );
       case 5: return (
         <CheckboxStep
