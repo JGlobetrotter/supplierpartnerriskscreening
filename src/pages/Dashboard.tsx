@@ -44,6 +44,14 @@ const Dashboard = () => {
     fetch();
   }, [user]);
 
+  const deleteScreening = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    if (!confirm('Are you sure you want to delete this screening?')) return;
+    await supabase.from('screening_responses').delete().eq('screening_id', id);
+    await supabase.from('screenings').delete().eq('id', id);
+    setScreenings(prev => prev.filter(s => s.id !== id));
+  };
+
   const filtered = screenings.filter(s => {
     if (statusFilter !== 'all' && s.status !== statusFilter) return false;
     if (riskFilter !== 'all' && s.risk_level !== riskFilter) return false;
