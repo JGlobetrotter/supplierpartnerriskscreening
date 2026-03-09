@@ -173,6 +173,15 @@ const Dashboard = () => {
                           {getRiskLabel(s.risk_level)}
                         </Badge>
                       )}
+                      {s.status === 'complete' && (
+                        <button
+                          onClick={(e) => { e.stopPropagation(); generateScreeningPdf(s.id); }}
+                          className="rounded p-1 text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
+                          title="Download PDF report"
+                        >
+                          <Download className="h-4 w-4" />
+                        </button>
+                      )}
                       <button
                         onClick={(e) => deleteScreening(e, s.id)}
                         className="rounded p-1 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
