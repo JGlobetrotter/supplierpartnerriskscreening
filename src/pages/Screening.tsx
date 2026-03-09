@@ -12,6 +12,7 @@ import Step2PartnerInfo from '@/components/wizard/Step2PartnerInfo';
 import Step3GeographicRisk from '@/components/wizard/Step3GeographicRisk';
 import CheckboxStep from '@/components/wizard/CheckboxStep';
 import Step10Summary from '@/components/wizard/Step10Summary';
+import FileUpload from '@/components/wizard/FileUpload';
 import {
   calculateGeographicRisk,
   calculateLaborScore,
