@@ -1,5 +1,5 @@
 import streamlit as st
-from lib.db import get_supabase
+from lib.firebase_auth import sign_in, sign_up
 
 st.set_page_config(
     page_title="Supplier Risk Screening",
@@ -22,10 +22,8 @@ with tab_in:
         password = st.text_input("Password", type="password")
         if st.form_submit_button("Sign In", use_container_width=True):
             try:
-                sb = get_supabase()
-                res = sb.auth.sign_in_with_password({"email": email, "password": password})
-                st.session_state.user = res.user
-                st.session_state.session = res.session
+                data = sign_in(email, password)
+                st.session_state.user = {"uid": data["localId"], "email": data["email"]}
                 st.switch_page("pages/1_Dashboard.py")
             except Exception as e:
                 st.error(str(e))
@@ -36,11 +34,11 @@ with tab_up:
         password2 = st.text_input("Password", type="password", key="su_pw", help="Minimum 6 characters")
         if st.form_submit_button("Create Account", use_container_width=True):
             try:
-                sb = get_supabase()
-                sb.auth.sign_up({"email": email2, "password": password2})
-                st.success("Account created! Check your email to confirm, then sign in.")
+                data = sign_up(email2, password2)
+                st.session_state.user = {"uid": data["localId"], "email": data["email"]}
+                st.switch_page("pages/1_Dashboard.py")
             except Exception as e:
                 st.error(str(e))
 
-st.markdown("---")
+st.divider()
 st.caption("Created by [Navisignal](https://navisignal.app)")

@@ -1,47 +1,45 @@
 import streamlit as st
+from datetime import datetime
 from lib.auth import require_auth
-from lib.db import get_supabase
-from lib.scoring import get_risk_label, RISK_COLORS
+from lib.firebase_client import get_db
+from lib.scoring import get_risk_label
 from lib.pdf import generate_pdf_bytes
 
 st.set_page_config(page_title="Dashboard — Risk Screening", page_icon="🛡️", layout="wide")
 
 user = require_auth()
-sb = get_supabase()
+db = get_db()
 
 # Header
 col_title, col_actions = st.columns([3, 1])
 with col_title:
     st.markdown("## 🛡️ Risk Screening Dashboard")
-    st.caption(f"Signed in as {user.email}")
+    st.caption(f"Signed in as {user['email']}")
 with col_actions:
     if st.button("+ New Screening", use_container_width=True, type="primary"):
-        st.session_state.pop("screening_id", None)
-        st.session_state.pop("wizard_step", None)
-        st.session_state.pop("wizard_data", None)
+        for key in ["screening_id", "wizard_step", "wizard_data", "wizard_data_loaded"]:
+            st.session_state.pop(key, None)
         st.switch_page("pages/2_Screening.py")
     if st.button("Sign Out", use_container_width=True):
-        sb.auth.sign_out()
-        for key in ["user", "session", "screening_id", "wizard_step", "wizard_data"]:
+        for key in ["user", "screening_id", "wizard_step", "wizard_data", "wizard_data_loaded", "result_screening_id"]:
             st.session_state.pop(key, None)
         st.switch_page("app.py")
 
 st.divider()
 
 
-@st.cache_data(ttl=10, show_spinner=False)
 def load_screenings(user_id: str):
-    res = sb.table("screenings").select("*").eq("user_id", user_id).order("updated_at", desc=True).execute()
-    return res.data or []
+    docs = db.collection("screenings").where("user_id", "==", user_id).order_by("updated_at", direction="DESCENDING").stream()
+    return [{"id": d.id, **d.to_dict()} for d in docs]
 
 
-screenings = load_screenings(user.id)
+screenings = load_screenings(user["uid"])
 
 # Stats
 total = len(screenings)
-drafts = sum(1 for s in screenings if s["status"] == "draft")
-complete = sum(1 for s in screenings if s["status"] == "complete")
-high_risk = sum(1 for s in screenings if s["risk_level"] == "high")
+drafts = sum(1 for s in screenings if s.get("status") == "draft")
+complete = sum(1 for s in screenings if s.get("status") == "complete")
+high_risk = sum(1 for s in screenings if s.get("risk_level") == "high")
 
 c1, c2, c3, c4 = st.columns(4)
 c1.metric("Total Screenings", total)
@@ -54,13 +52,13 @@ st.divider()
 # Filters
 fc1, fc2 = st.columns(2)
 with fc1:
-    status_filter = st.selectbox("Status", ["All", "draft", "complete"], key="status_filter")
+    status_filter = st.selectbox("Status", ["All", "draft", "complete"])
 with fc2:
-    risk_filter = st.selectbox("Risk Level", ["All", "low", "medium", "high"], key="risk_filter")
+    risk_filter = st.selectbox("Risk Level", ["All", "low", "medium", "high"])
 
 filtered = [
     s for s in screenings
-    if (status_filter == "All" or s["status"] == status_filter)
+    if (status_filter == "All" or s.get("status") == status_filter)
     and (risk_filter == "All" or s.get("risk_level") == risk_filter)
 ]
 
@@ -74,39 +72,41 @@ else:
             row1, row2 = st.columns([4, 2])
             with row1:
                 name = s.get("partner_name") or "Untitled"
-                status_badge = "🟡 Draft" if s["status"] == "draft" else "✅ Complete"
+                status_badge = "🟡 Draft" if s.get("status") == "draft" else "✅ Complete"
                 risk = s.get("risk_level")
                 risk_badge = ""
                 if risk:
-                    color_emoji = {"low": "🟢", "medium": "🟠", "high": "🔴"}.get(risk, "")
-                    risk_badge = f" · {color_emoji} {get_risk_label(risk)}"
+                    emoji = {"low": "🟢", "medium": "🟠", "high": "🔴"}.get(risk, "")
+                    risk_badge = f" · {emoji} {get_risk_label(risk)}"
                     if s.get("overall_score") is not None:
                         risk_badge += f" ({s['overall_score']}/100)"
-
                 st.markdown(f"**{name}** &nbsp;&nbsp; {status_badge}{risk_badge}")
-                from datetime import datetime
-                updated = datetime.fromisoformat(s["updated_at"].replace("Z", "+00:00"))
-                st.caption(f"Updated {updated.strftime('%b %d, %Y')} · Step {s['current_step']}/10")
+
+                updated = s.get("updated_at")
+                if updated:
+                    if hasattr(updated, "strftime"):
+                        date_str = updated.strftime("%b %d, %Y")
+                    else:
+                        date_str = str(updated)[:10]
+                    st.caption(f"Updated {date_str} · Step {s.get('current_step', 1)}/10")
 
             with row2:
                 btn_cols = st.columns(3)
-                if s["status"] == "draft":
+                if s.get("status") == "draft":
                     if btn_cols[0].button("Continue", key=f"cont_{s['id']}"):
                         st.session_state.screening_id = s["id"]
-                        st.session_state.pop("wizard_step", None)
-                        st.session_state.pop("wizard_data", None)
+                        for key in ["wizard_step", "wizard_data", "wizard_data_loaded"]:
+                            st.session_state.pop(key, None)
                         st.switch_page("pages/2_Screening.py")
                 else:
                     if btn_cols[0].button("View", key=f"view_{s['id']}"):
                         st.session_state.result_screening_id = s["id"]
                         st.switch_page("pages/3_Results.py")
 
-                if s["status"] == "complete":
+                if s.get("status") == "complete":
                     if btn_cols[1].button("PDF", key=f"pdf_{s['id']}"):
-                        resp = sb.table("screening_responses").select("*").eq("screening_id", s["id"]).execute()
-                        step_data = {}
-                        for r in (resp.data or []):
-                            step_data[r["step_number"]] = r["response_data"]
+                        resp_docs = db.collection("screenings").document(s["id"]).collection("responses").stream()
+                        step_data = {int(r.id): r.to_dict().get("response_data", {}) for r in resp_docs}
                         pdf_bytes = generate_pdf_bytes(step_data)
                         fname = (s.get("partner_name") or "report").replace(" ", "_")
                         st.download_button(
@@ -118,9 +118,10 @@ else:
                         )
 
                 if btn_cols[2].button("🗑", key=f"del_{s['id']}"):
-                    sb.table("screening_responses").delete().eq("screening_id", s["id"]).execute()
-                    sb.table("screenings").delete().eq("id", s["id"]).execute()
-                    st.cache_data.clear()
+                    resp_docs = db.collection("screenings").document(s["id"]).collection("responses").stream()
+                    for r in resp_docs:
+                        r.reference.delete()
+                    db.collection("screenings").document(s["id"]).delete()
                     st.rerun()
 
 st.divider()
